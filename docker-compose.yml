@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    image: analystdays-similarity:latest
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - appdata:/data
+    restart: unless-stopped
+
+volumes:
+  appdata:
