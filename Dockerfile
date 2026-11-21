@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# Один образ: Next.js (порт $PORT, по умолчанию 3000) + FastAPI (127.0.0.1:8000).
+# Один образ: Next.js (слушает $PORT, на RelaxDev это 8080) + FastAPI (127.0.0.1:8000, снаружи недоступен).
 
 FROM node:20-slim AS web
 WORKDIR /web
@@ -13,7 +13,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     NODE_ENV=production \
     DATA_DIR=/data \
-    PORT=3000
+    PORT=8080
 WORKDIR /srv
 
 COPY backend/requirements.txt backend/requirements.txt
@@ -33,9 +33,9 @@ RUN useradd --create-home --uid 10001 app \
 USER app
 
 VOLUME ["/data"]
-EXPOSE 3000
+EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD python -c "import os,urllib.request as u; u.urlopen('http://127.0.0.1:%s/api/v1/health' % os.environ.get('PORT','3000'), timeout=4)" || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+  CMD python -c "import os,urllib.request as u; u.urlopen('http://127.0.0.1:%s/api/v1/health' % os.environ.get('PORT','8080'), timeout=4)" || exit 1
 
 CMD ["bash", "/srv/start.sh"]

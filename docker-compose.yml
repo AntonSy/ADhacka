@@ -3,7 +3,7 @@ services:
     build: .
     image: analystdays-similarity:latest
     ports:
-      - "${PORT:-3000}:3000"
+      - "${HOST_PORT:-3000}:8080"
     env_file:
       - path: .env
         required: false
